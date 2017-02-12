@@ -1,0 +1,7 @@
+doctype xml
+auth
+  unless key
+    type AuthKeyReq
+  else
+    type AuthReq
+    value= key
