@@ -18,10 +18,6 @@ app
     saveUninitialized: false,
     secret: process.env.LG_SECRET
   }))
-  .use(function (err, req, res, next) {
-    console.error(err.stack);
-    res.status(500).send('Something broke!')
-  })
   // Content
   .use('/:target/command', require('./controllers/command'))
   .use('/:target/pair', require('./controllers/pair'))
