@@ -18,7 +18,13 @@ module.exports = function SmartTV(hostname, pathname, body) {
     url
   };
 
+  console.log(url, body);
   return request(options)
+    .then(function(body) {
+      console.log(body);
+
+      return body;
+    })
     .then(XML.toObject)
     .then(response => response.envelope)
     .then(function(response) {
@@ -32,6 +38,7 @@ module.exports = function SmartTV(hostname, pathname, body) {
       return reply;
     })
     .catch(function() {
+      console.log('TIMEOUT');
       return Promise.reject({code: 403, message: 'TIMEOUT'});
     });
 };
