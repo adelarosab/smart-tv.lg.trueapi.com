@@ -4,7 +4,7 @@ const XML = require('./xml');
 
 module.exports = function SmartTV(hostname, pathname, body) {
   const url = URL.format({
-    hostname,
+    [hostname.includes(':') ? 'host' : 'hostname']: hostname,
     pathname,
     port: '8080',
     protocol: 'http'
