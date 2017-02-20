@@ -2,18 +2,19 @@ const request = require('./request');
 const URL = require('url');
 const XML = require('./xml');
 
-module.exports = function SmartTV(host, path, body) {
+module.exports = function SmartTV(hostname, pathname, body) {
   const url = URL.format({
-    hostname: host,
-    pathname: path,
+    hostname,
+    pathname,
     port: '8080',
-    protocol: 'http:'
+    protocol: 'http'
   });
 
   const options = {
     body,
     headers: {'Content-Type': 'text/xml'},
     method: 'POST',
+    timeout: 5000,
     url
   };
 
@@ -21,8 +22,6 @@ module.exports = function SmartTV(host, path, body) {
     .then(XML.toObject)
     .then(response => response.envelope)
     .then(function(response) {
-      console.log(response);
-
       const reply = {
         code: Number(response.ROAPError[0]),
         message: response.ROAPErrorDetail[0]
@@ -32,5 +31,7 @@ module.exports = function SmartTV(host, path, body) {
 
       return reply;
     })
-    .catch(console.error.bind(console));
+    .catch(function() {
+      return Promise.reject({code: 403, message: 'TIMEOUT'});
+    });
 };

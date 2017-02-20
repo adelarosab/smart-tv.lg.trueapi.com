@@ -3,20 +3,25 @@ const SmartTV = require('../library/smart-tv');
 const template = require('../library/template');
 
 function pair(request, response) {
-  SmartTV(
-    request.params.target,
-    '/roap/api/auth',
-    template('pair.pug', {key: request.body.key})
-  )
-    .then(response => response.code)
+  const key = request.body.key;
+  const target = request.params.target;
+
+  SmartTV(target, '/roap/api/auth', template('pair.pug', {key}))
+    .then(response => response.code, response => response.code)
     .then(function(code) {
-      if (request.params.key && code === 200) {
-        request.session.devices = request.session.devices || {};
-        request.session.devices[request.params.target] = request.body.key;
+      const session = request.session;
+
+      if (key && code === 200) {
+        session.devices = session.devices || {};
+        session.devices[target] = key;
+
+        session.sessions = session.sessions || {};
+        session.sessions[target] = true;
       }
+
+      return code;
     })
-    .then(response.sendStatus.bind(response))
-    .catch(response.sendStatus.bind(response, 500));
+    .then(function(code) { response.sendStatus(code); });
 }
 
 module.exports = new express.Router({mergeParams: true})

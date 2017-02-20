@@ -10,7 +10,7 @@ app
   .set('view engine', 'pug')
   .set('x-powered-by', false)
   // Middleware
-  .use(morgan('combined'))
+  // .use(morgan('combined'))
   .use(parser.urlencoded({extended: true}))
   .use(session({
     name: 'trueapi',
